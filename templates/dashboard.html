@@ -1,0 +1,9 @@
+<div>
+    <h1>Dashboard</h1>
+    {% if products %}
+        {% for item in products %}
+            {{ item }}
+            <br>
+        {% endfor %}
+    {% endif %}
+</div>
