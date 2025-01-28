@@ -20,29 +20,3 @@
 
 </body>
 </html>
-
-{% comment %} <!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard</title>
-</head>
-<body>
-    <h1>Products</h1>
-    <table border="1">
-        <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Image</th>
-            <th>Link</th>
-        </tr>
-        {% for data in datas %}
-        <tr>
-            <td>{{ data.name }}</td>
-            <td>{{ data.price }}</td>
-            <td><img src="{{ data.img }}" alt="{{ data.name }}" width="100"></td>
-            <td><a href="{{ data.link }}" target="_blank ">View Product</a></td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html> {% endcomment %}
