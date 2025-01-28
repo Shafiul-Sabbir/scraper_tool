@@ -5,13 +5,16 @@
 </head>
 <body>
     <h1>Products Showing From Category : {{ fb_products.products_type }}</h1>
+    <h2>Number of Products : {{ fb_products.total_products }}</h2>
     <table border="1" style="width: 100%">
         <tr>
-            <th> Product ID</th>
-            <th>Company Name</th>
+            <th> Number </th>
+            <th> Product ID </th>
+            <th> Company Name </th>
         </tr>
         {% for data in datas %}
         <tr>
+            <td> {{data.Number}} </td>
             <td> {{data.ID}} </td>
             <td> {{data.Company_Name}} </td>
         </tr>

@@ -22,7 +22,10 @@ def login_and_save_cookies(username, password):
     url = 'https://www.facebook.com/login'
     options = Options()
     options.headless = False
-    service = Service('/usr/local/bin/chromedriver')
+    # for windows
+    service = Service('C:/Windows/chromedriver.exe')
+    # for macos
+    # service = Service('/usr/local/bin/chromedriver')
     driver = webdriver.Chrome(service=service, options=options)
     
     driver.get(url)

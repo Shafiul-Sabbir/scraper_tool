@@ -6,7 +6,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
-from bs4 import BeautifulSoup
 from .login_cookies import load_cookies, save_cookies, login_and_save_cookies
 import traceback
 import csv
@@ -22,12 +21,15 @@ filename = 'login_cookies.pkl'
 filepath = os.path.join(media_dir, filename)
 
 def scrape_fb_data():
-    url = 'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BD&is_targeted_country=false&media_type=all&q=Hoodie&search_type=keyword_unordered'
+    url = 'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BD&is_targeted_country=false&media_type=all&q=Shirt&search_type=keyword_unordered'
 
     # Set up Selenium WebDriver
     options = Options()
     options.headless = False  # Run without headless mode for debugging
-    service = Service('/usr/local/bin/chromedriver')  # Path to your WebDriver
+    # for windows
+    service = Service('C:/Windows/chromedriver.exe')
+    # for macos
+    # service = Service('/usr/local/bin/chromedriver')
     driver = webdriver.Chrome(service=service, options=options)
     
     # Open the URL
@@ -37,17 +39,7 @@ def scrape_fb_data():
     password = '835137'
     
     login_and_save_cookies(username, password)
-    
-    # # Load cookies to bypass login
-    # load_cookies(driver, filepath)
-    # print("Cookies loaded. Bypassing login...")
-    # driver.refresh()
-    # print("Page refreshed...")
-    # Open the URL
-    # driver.get(url)
-    
 
-    
     products_path = '/html/body/div[1]/div/div/div/div/div/div/div[1]/div/div/div/div[4]/div[2]/div[2]/div[4]/div[1]/div'
     products_type_path = '/html/body/div[1]/div/div/div/div/div/div/div[1]/div/div/div/div[2]/div[3]/div/div/div[3]/div/div/div/div/div/div/div/div[2]/div/div/div/div[1]/div[2]/div[1]/div/input'
     load_more_button_xpath = '/html/body/div[1]/div/div/div/div/div/div/div[1]/div/div/div/div[5]/div[2]/a'
@@ -60,7 +52,7 @@ def scrape_fb_data():
     file_path = os.path.join(media_dir, filename)
     
     filecsv = open(file_path, 'w', encoding='utf8')
-    csv_columns = ['ID', 'Company_Name']
+    csv_columns = ['Number', 'ID', 'Company_Name']
     writer = csv.DictWriter(filecsv, fieldnames=csv_columns)
     writer.writeheader()
     
@@ -75,6 +67,7 @@ def scrape_fb_data():
         export_data['products_type'] = products_type
         
         previous_product_count = 0
+        number = 0
         while True:
             # Finding all the products part
             products = WebDriverWait(driver, 60).until(
@@ -92,6 +85,7 @@ def scrape_fb_data():
             
             for product in products:
                 try:
+                    number += 1
                     id_element = product.find_element(By.CLASS_NAME, "x8t9es0.xw23nyj.xo1l8bm.x63nzvj.x108nfp6.xq9mrsl.x1h4wwuj.xeuugli")
                     name_element = product.find_element(By.CLASS_NAME, "x8t9es0.x1fvot60.xxio538.x108nfp6.xq9mrsl.x1h4wwuj.x117nqv4.xeuugli")
                     
@@ -103,7 +97,7 @@ def scrape_fb_data():
                         id = None
                     
                     name = name_element.text if name_element else None
-                    writer.writerow({'ID': id, 'Company_Name': name})
+                    writer.writerow({'Number': number, 'ID': id, 'Company_Name': name})
                 except Exception as inner_e:
                     print(f"Error processing product: {inner_e}")
             
@@ -155,7 +149,9 @@ def scrape_fb_data():
             except Exception as e:
                 print("No 'See more' button found or an error occurred. Exiting... ", e)
                 break
-
+        
+        export_data['total_products'] = number
+        
     except Exception as e:
         print(f"An error occurred: {e}")
         traceback.print_exc()
